@@ -50,6 +50,12 @@ FROM base AS build
 WORKDIR /app
 COPY --from=deps /app /app
 COPY . .
+
+# ✨ 修正：先編譯底層依賴工具包，生成 TypeScript 的宣告檔案 (.d.ts)
+RUN pnpm --filter @paperclipai/adapter-utils build || true
+RUN pnpm --filter @paperclipai/shared build || true
+
+# 接下來再編譯主程式
 RUN pnpm --filter @paperclipai/ui build
 RUN pnpm --filter @paperclipai/plugin-sdk build
 RUN pnpm --filter @paperclipai/server build
