@@ -29,6 +29,11 @@ COPY packages/db/package.json packages/db/
 COPY packages/adapter-utils/package.json packages/adapter-utils/
 COPY packages/mcp-server/package.json packages/mcp-server/
 COPY packages/adapters/acpx-local/package.json packages/adapters/acpx-local/
+
+# ✨ 修正：補上官方漏掉的適配器依賴宣告，確保依賴套件能被正確安裝
+COPY packages/adapters/claude-local/package.json packages/adapters/claude-local/
+COPY packages/adapters/codex-local/package.json packages/adapters/codex-local/
+
 COPY packages/adapters/cursor-cloud/package.json packages/adapters/cursor-cloud/
 COPY packages/adapters/cursor-local/package.json packages/adapters/cursor-local/
 COPY packages/adapters/gemini-local/package.json packages/adapters/gemini-local/
@@ -51,7 +56,7 @@ WORKDIR /app
 COPY --from=deps /app /app
 COPY . .
 
-# ✨ 終極修正：使用遞迴拓撲編譯，讓 pnpm 自動由底往上完美編譯所有關聯套件
+# 使用遞迴拓撲編譯，讓 pnpm 自動由底往上完美編譯所有關聯套件
 RUN pnpm -r --if-present build
 RUN test -f server/dist/index.js || (echo "ERROR: server build output missing" && exit 1)
 
