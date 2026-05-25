@@ -51,10 +51,8 @@ WORKDIR /app
 COPY --from=deps /app /app
 COPY . .
 
-# ✨ 終極修正：使用 "..." 前綴，讓 pnpm 自動追蹤並依正確拓撲順序編譯所有前置本地依賴包
-RUN pnpm --filter ...@paperclipai/ui build --if-present
-RUN pnpm --filter ...@paperclipai/plugin-sdk build --if-present
-RUN pnpm --filter ...@paperclipai/server build --if-present
+# ✨ 終極修正：使用遞迴拓撲編譯，讓 pnpm 自動由底往上完美編譯所有關聯套件
+RUN pnpm -r --if-present build
 RUN test -f server/dist/index.js || (echo "ERROR: server build output missing" && exit 1)
 
 FROM base AS production
