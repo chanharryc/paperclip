@@ -568,8 +568,8 @@ export function resolveExternalAdapterRegistration(
     ...externalAdapter,
     sessionManagement:
       externalAdapter.sessionManagement
-        ?? getAdapterSessionManagement(externalAdapter.type)
-        ?? undefined,
+      ?? getAdapterSessionManagement(externalAdapter.type)
+      ?? undefined,
   };
 }
 
