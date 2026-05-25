@@ -51,14 +51,10 @@ WORKDIR /app
 COPY --from=deps /app /app
 COPY . .
 
-# ✨ 修正：先編譯底層依賴工具包，生成 TypeScript 的宣告檔案 (.d.ts)
-RUN pnpm --filter @paperclipai/adapter-utils build || true
-RUN pnpm --filter @paperclipai/shared build || true
-
-# 接下來再編譯主程式
-RUN pnpm --filter @paperclipai/ui build
-RUN pnpm --filter @paperclipai/plugin-sdk build
-RUN pnpm --filter @paperclipai/server build
+# ✨ 終極修正：使用 "..." 前綴，讓 pnpm 自動追蹤並依正確拓撲順序編譯所有前置本地依賴包
+RUN pnpm --filter ...@paperclipai/ui build --if-present
+RUN pnpm --filter ...@paperclipai/plugin-sdk build --if-present
+RUN pnpm --filter ...@paperclipai/server build --if-present
 RUN test -f server/dist/index.js || (echo "ERROR: server build output missing" && exit 1)
 
 FROM base AS production
